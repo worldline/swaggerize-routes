@@ -51,6 +51,31 @@ test('validation', function (t) {
         });
     });
 
+    t.test(' empty query param pass with allowEmptyValue: true', function (t) {
+        t.plan(2);
+
+        var functionnalValidatorAllowEmpty = validator.make({
+            name: 'emptyQs',
+            required: false,
+            type: 'string',
+            allowEmptyValue: true
+        });
+
+        functionnalValidatorAllowEmpty.validate('', function (error) {
+            t.ok(!error, 'no error.');
+        });
+
+        var functionnalValidator = validator.make({
+            name: 'emptyQs',
+            required: false,
+            type: 'string'
+        });
+
+        functionnalValidator.validate('', function (error) {
+            t.ok(error, 'error.');
+        });
+    });
+
     t.test('$ref default resolves to root schema', function (t) {
         t.plan(1);
 
