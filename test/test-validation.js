@@ -52,7 +52,7 @@ test('validation', function (t) {
     });
 
     t.test(' empty query param pass with allowEmptyValue: true', function (t) {
-        t.plan(2);
+        t.plan(3);
 
         var functionnalValidatorAllowEmpty = validator.make({
             name: 'emptyQs',
@@ -62,6 +62,18 @@ test('validation', function (t) {
         });
 
         functionnalValidatorAllowEmpty.validate('', function (error) {
+            t.ok(!error, 'no error.');
+        });
+
+
+        var functionnalValidatorMi = validator.make({
+            name: 'emptyQs',
+            required: false,
+            type: 'string',
+            minLength: 0
+        });
+
+        functionnalValidatorMi.validate('', function (error) {
             t.ok(!error, 'no error.');
         });
 
