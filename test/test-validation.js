@@ -252,58 +252,6 @@ test('validation', function (t) {
         });
     });
 
-    t.test('input fail (empty string)', function (t) {
-        t.plan(3);
-
-        validator.make({
-            name: 'id',
-            required: true,
-            type: 'string'
-        }).validate('', function (error) {
-            t.ok(error, 'error.');
-        });
-
-        validator.make({
-            name: 'id',
-            required: true,
-            type: 'string',
-            allowEmptyValue: false
-        }).validate('', function (error) {
-            t.ok(error, 'error.');
-        });
-
-        validator.make({
-            name: 'id',
-            required: true,
-            type: 'string',
-            minLength: 1
-        }).validate('', function (error) {
-            t.ok(error, 'error.');
-        });
-    });
-
-    t.test('input pass (empty string with allowEmtpyValue: true or minLength: 0)', function (t) {
-        t.plan(2);
-
-        validator.make({
-            name: 'id',
-            required: true,
-            type: 'string',
-            allowEmptyValue: true
-        }).validate('', function (error) {
-            t.ok(!error, 'no error.');
-        });
-
-        validator.make({
-            name: 'id',
-            required: true,
-            type: 'string',
-            minLength: 0
-        }).validate('', function (error) {
-            t.ok(!error, 'no error.');
-        });
-    });
-
     t.test('input ignore extra value', function(t) {
         t.plan(2);
 
@@ -317,6 +265,41 @@ test('validation', function (t) {
         v.validate({ id: 1, name: 'fluffy', extra: 'foo'}, function(error, result) {
             t.ok(!error, 'no error.');
             t.ok(!result.extra, 'No extra properties')
+        });
+    });
+
+    t.test('query empty param', function (t) {
+        t.plan(5);
+
+        validator.make({
+            name: 'foo',
+            required: true,
+            type: 'string',
+            in: 'query'
+        }).validate('', function (error) {
+            t.ok(error, 'error.');
+        });
+
+        [false, 'anything', 1].forEach(function(value) {
+            validator.make({
+                name: 'foo',
+                required: true,
+                type: 'string',
+                in: 'query',
+                allowEmptyValue: value
+            }).validate('', function (error) {
+                t.ok(error, 'error.');
+            });
+        });
+
+        validator.make({
+            name: 'foo',
+            required: true,
+            type: 'string',
+            in: 'query',
+            allowEmptyValue: true
+        }).validate('', function (error) {
+            t.ok(!error, 'no error.');
         });
     });
 
@@ -342,8 +325,38 @@ test('validation', function (t) {
         });
     });
 
-});
+    t.test('formData empty param', function (t) {
+        t.plan(5);
 
+        validator.make({
+            name: 'foo',
+            type: 'string',
+            in: 'formData'
+        }).validate('', function (error) {
+            t.ok(error, 'error.');
+        });
+
+        [false, 'anything', 1].forEach(function(value) {
+            validator.make({
+                name: 'foo',
+                type: 'string',
+                in: 'formData',
+                allowEmptyValue: value
+            }).validate('', function (error) {
+                t.ok(error, 'error.');
+            });
+        });
+
+        validator.make({
+            name: 'foo',
+            type: 'string',
+            in: 'formData',
+            allowEmptyValue: true
+        }).validate('', function (error) {
+            t.ok(!error, 'error.');
+        });
+    });
+});
 
 test('named validation', function (t) {
 
