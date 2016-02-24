@@ -51,43 +51,6 @@ test('validation', function (t) {
         });
     });
 
-    t.test(' empty query param pass with allowEmptyValue: true', function (t) {
-        t.plan(3);
-
-        var functionnalValidatorAllowEmpty = validator.make({
-            name: 'emptyQs',
-            required: false,
-            type: 'string',
-            allowEmptyValue: true
-        });
-
-        functionnalValidatorAllowEmpty.validate('', function (error) {
-            t.ok(!error, 'no error.');
-        });
-
-
-        var functionnalValidatorMi = validator.make({
-            name: 'emptyQs',
-            required: false,
-            type: 'string',
-            minLength: 0
-        });
-
-        functionnalValidatorMi.validate('', function (error) {
-            t.ok(!error, 'no error.');
-        });
-
-        var functionnalValidator = validator.make({
-            name: 'emptyQs',
-            required: false,
-            type: 'string'
-        });
-
-        functionnalValidator.validate('', function (error) {
-            t.ok(error, 'error.');
-        });
-    });
-
     t.test('$ref default resolves to root schema', function (t) {
         t.plan(1);
 
@@ -289,6 +252,58 @@ test('validation', function (t) {
         });
     });
 
+    t.test('input fail (empty string)', function (t) {
+        t.plan(3);
+
+        validator.make({
+            name: 'id',
+            required: true,
+            type: 'string'
+        }).validate('', function (error) {
+            t.ok(error, 'error.');
+        });
+
+        validator.make({
+            name: 'id',
+            required: true,
+            type: 'string',
+            allowEmptyValue: false
+        }).validate('', function (error) {
+            t.ok(error, 'error.');
+        });
+
+        validator.make({
+            name: 'id',
+            required: true,
+            type: 'string',
+            minLength: 1
+        }).validate('', function (error) {
+            t.ok(error, 'error.');
+        });
+    });
+
+    t.test('input pass (empty string with allowEmtpyValue: true or minLength: 0)', function (t) {
+        t.plan(2);
+
+        validator.make({
+            name: 'id',
+            required: true,
+            type: 'string',
+            allowEmptyValue: true
+        }).validate('', function (error) {
+            t.ok(!error, 'no error.');
+        });
+
+        validator.make({
+            name: 'id',
+            required: true,
+            type: 'string',
+            minLength: 0
+        }).validate('', function (error) {
+            t.ok(!error, 'no error.');
+        });
+    });
+
     t.test('input ignore extra value', function(t) {
         t.plan(2);
 
@@ -405,5 +420,4 @@ test('named validation', function (t) {
       });
     });
   });
-
 });
