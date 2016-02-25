@@ -268,6 +268,41 @@ test('validation', function (t) {
         });
     });
 
+    t.test('query empty param', function (t) {
+        t.plan(5);
+
+        validator.make({
+            name: 'foo',
+            required: true,
+            type: 'string',
+            in: 'query'
+        }).validate('', function (error) {
+            t.ok(error, 'error.');
+        });
+
+        [false, 'anything', 1].forEach(function(value) {
+            validator.make({
+                name: 'foo',
+                required: true,
+                type: 'string',
+                in: 'query',
+                allowEmptyValue: value
+            }).validate('', function (error) {
+                t.ok(error, 'error.');
+            });
+        });
+
+        validator.make({
+            name: 'foo',
+            required: true,
+            type: 'string',
+            in: 'query',
+            allowEmptyValue: true
+        }).validate('', function (error) {
+            t.ok(!error, 'no error.');
+        });
+    });
+
     t.test('formData', function (t) {
         t.plan(1);
 
@@ -290,8 +325,38 @@ test('validation', function (t) {
         });
     });
 
-});
+    t.test('formData empty param', function (t) {
+        t.plan(5);
 
+        validator.make({
+            name: 'foo',
+            type: 'string',
+            in: 'formData'
+        }).validate('', function (error) {
+            t.ok(error, 'error.');
+        });
+
+        [false, 'anything', 1].forEach(function(value) {
+            validator.make({
+                name: 'foo',
+                type: 'string',
+                in: 'formData',
+                allowEmptyValue: value
+            }).validate('', function (error) {
+                t.ok(error, 'error.');
+            });
+        });
+
+        validator.make({
+            name: 'foo',
+            type: 'string',
+            in: 'formData',
+            allowEmptyValue: true
+        }).validate('', function (error) {
+            t.ok(!error, 'error.');
+        });
+    });
+});
 
 test('named validation', function (t) {
 
@@ -368,5 +433,4 @@ test('named validation', function (t) {
       });
     });
   });
-
 });
