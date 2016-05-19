@@ -21,6 +21,11 @@ test('routebuilder', function (t) {
             t.ok(route.hasOwnProperty('path'), 'has path property.');
             t.ok(route.hasOwnProperty('security'), 'has security property.');
             t.ok(route.hasOwnProperty('validators'), 'has before property.');
+            if(route.method === 'get' && route.path === '/pets'){
+              t.ok(route.jsonp === 'callback', 'options property is the right one.');
+              t.ok(route.cache.statuses.join(',') === '200', 'options property is the right one.');
+              t.ok(route.config.plugins.policies.join(', ') === 'isLoggedIn, addTracking, logThis', 'options property is the right one.');
+            }
             t.ok(route.hasOwnProperty('handler'), 'has handler property.');
             t.ok(route.hasOwnProperty('produces'), 'has validate property.');
         });
@@ -142,6 +147,35 @@ test('routebuilder', function (t) {
         t.throws(function () {
             buildroutes({ api: api, handlers: 'asdf' });
         }, 'throws error for bad directory.');
+    });
+
+    t.test('build with root path', function (t) {
+        var routes = buildroutes({
+            api: require('./fixtures/defs/testroot.json'),
+            basedir: path.join(__dirname, 'fixtures'),
+            handlers: {
+                $get: function () {},
+                other: {
+                    $get: function () {}
+                }
+            }
+        });
+
+        t.strictEqual(routes.length, 2, 'added 1 routes.');
+
+        routes.forEach(function (route) {
+            t.ok(route.hasOwnProperty('method'), 'has method property.');
+            t.ok(route.hasOwnProperty('description'), 'has validate property.');
+            t.ok(route.hasOwnProperty('name'), 'has name property.');
+            t.ok(route.hasOwnProperty('path'), 'has path property.');
+            t.ok(route.hasOwnProperty('security'), 'has security property.');
+            t.ok(route.hasOwnProperty('validators'), 'has validators property.');
+            t.ok(route.hasOwnProperty('handler'), 'has handler property.');
+            t.ok(route.hasOwnProperty('produces'), 'has produces property.');
+            t.ok(route.hasOwnProperty('consumes'), 'has consumes property.');
+        });
+
+        t.end();
     });
 
 });
