@@ -2,12 +2,12 @@ language: node_js
 node_js:
   - "0.12"
   - "0.10"
-  - "iojs"
-  - "iojs-v1.1.0"
+  - "6"
+  - "8"
 branches:
   only:
     - master
-    - v1.0.0
+    - worldlineMaster
 before_install:
   - git submodule update --init --recursive
 script:
