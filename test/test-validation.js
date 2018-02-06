@@ -51,6 +51,25 @@ test('validation', function (t) {
         });
     });
 
+    [true, false].forEach(function(isRequired){
+        ['string', 'boolean', 'integer'].forEach(function(type){
+            var requiredInTitle = isRequired? 'required ': 'not required ';
+
+            t.test(requiredInTitle + type + ' param pass with allowEmptyValue', function(t){
+                t.plan(1);
+
+                validator.make({
+                    name: 'param',
+                    required: isRequired,
+                    type: type,
+                    allowEmptyValue: true
+                }).validate('', function(error){
+                    t.ok(!error, 'no error.');
+                });
+            });
+        });
+    });
+
     t.test('$ref default resolves to root schema', function (t) {
         t.plan(1);
 
@@ -198,7 +217,7 @@ test('validation', function (t) {
         });
     });
 
-    ['false', '0'].forEach(function(value) {
+    ['false', '0', false].forEach(function(value) {
         t.test('input coerce to boolean (pass) - value ' + value, function (t) {
             t.plan(2);
 
@@ -213,7 +232,7 @@ test('validation', function (t) {
         });
     });
 
-    ['true', '1'].forEach(function(value) {
+    ['true', '1', true].forEach(function(value) {
         t.test('input coerce to boolean (pass) - value ' + value, function (t) {
             t.plan(2);
 
@@ -268,48 +287,13 @@ test('validation', function (t) {
         });
     });
 
-    t.test('query empty param', function (t) {
-        t.plan(5);
-
-        validator.make({
-            name: 'foo',
-            required: true,
-            type: 'string',
-            in: 'query'
-        }).validate('', function (error) {
-            t.ok(error, 'error.');
-        });
-
-        [false, 'anything', 1].forEach(function(value) {
-            validator.make({
-                name: 'foo',
-                required: true,
-                type: 'string',
-                in: 'query',
-                allowEmptyValue: value
-            }).validate('', function (error) {
-                t.ok(error, 'error.');
-            });
-        });
-
-        validator.make({
-            name: 'foo',
-            required: true,
-            type: 'string',
-            in: 'query',
-            allowEmptyValue: true
-        }).validate('', function (error) {
-            t.ok(!error, 'no error.');
-        });
-    });
-
     t.test('formData', function (t) {
         t.plan(1);
 
         validator.make({
             name: 'upload',
             type: 'file'
-        }, 'multipart/form-data').validate('data', function (error) {
+        }, ['multipart/form-data']).validate('data', function (error) {
             t.ok(!error, 'no error.');
         });
     });
@@ -320,40 +304,8 @@ test('validation', function (t) {
         validator.make({
             name: 'upload',
             type: 'file'
-        }, 'application/json').validate('data', function (error) {
+        }, ['application/json']).validate('data', function (error) {
             t.ok(error, 'error.');
-        });
-    });
-
-    t.test('formData empty param', function (t) {
-        t.plan(5);
-
-        validator.make({
-            name: 'foo',
-            type: 'string',
-            in: 'formData'
-        }).validate('', function (error) {
-            t.ok(error, 'error.');
-        });
-
-        [false, 'anything', 1].forEach(function(value) {
-            validator.make({
-                name: 'foo',
-                type: 'string',
-                in: 'formData',
-                allowEmptyValue: value
-            }).validate('', function (error) {
-                t.ok(error, 'error.');
-            });
-        });
-
-        validator.make({
-            name: 'foo',
-            type: 'string',
-            in: 'formData',
-            allowEmptyValue: true
-        }).validate('', function (error) {
-            t.ok(!error, 'error.');
         });
     });
 });
